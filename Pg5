@@ -1,0 +1,59 @@
+5. Create cursor for Employee table & extract the values from the table. Declare the variables ,Open the cursor &
+extract the values from the cursor. Close the cursor. Employee(E_id, E_name, Age, Salary) 
+
+CREATE TABLE Employee (
+ E_id INT NOT NULL AUTO_INCREMENT, -- Employee ID, automatically increments for each new record
+ E_name VARCHAR(100) NOT NULL, -- Employee Name, a string with max length of 100 characters
+ Age INT, -- Age, an integer
+ Salary DECIMAL(10, 2), -- Salary, a decimal with 10 digits, 2 of which are after the decimal point
+ PRIMARY KEY (E_id) -- Setting E_id as the primary key
+);
+-- Insert sample data into Employee table
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('John Doe', 30, 50000.00);
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('Jane Smith', 28, 55000.00);
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('Alice Lee', 35, 60000.00);
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('Bob Brown', 40, 45000.00);
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('Charlie White', 25, 48000.00);
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('Diana Green', 32, 62000.00);
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('Eve Black', 29, 51000.00);
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('Frank Yellow', 38, 54000.00);
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('Grace Blue', 33, 59000.00);
+INSERT INTO Employee (E_name, Age, Salary) VALUES ('Harry Red', 27, 53000.00);
+-- Set the delimiter to handle the block of code
+DELIMITER $$
+-- Create the procedure to extract data using a cursor
+CREATE PROCEDURE DisplayEmployeeData()
+BEGIN
+ -- Declare variables to hold the fetched data
+ DECLARE v_id INT;
+ DECLARE v_name VARCHAR(100);
+ DECLARE v_age INT;
+ DECLARE v_salary DECIMAL(10, 2);
+
+ -- Declare a variable to handle the end of cursor condition
+ DECLARE done INT DEFAULT 0;
+ -- Declare the cursor to select data from the Employee table
+ DECLARE employee_cursor CURSOR FOR
+ SELECT E_id, E_name, Age, Salary FROM Employee;
+ -- Declare a handler for when the cursor reaches the end of the result set
+ DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+ -- Open the cursor
+ OPEN employee_cursor;
+ -- Fetch and display the employee data
+ read_loop: LOOP
+ -- Fetch data into variables
+ FETCH employee_cursor INTO v_id, v_name, v_age, v_salary; 
+-- Exit the loop if no more rows are found
+ IF done THEN
+ LEAVE read_loop;
+ END IF;
+ -- Display the fetched data with SELECT (this will return a result set)
+ SELECT v_id AS 'Emp ID', v_name AS 'Emp Name', v_age AS 'Age', v_salary AS 'Salary';
+ END LOOP;
+ -- Close the cursor
+ CLOSE employee_cursor;
+END$$
+-- Reset delimiter back to default
+DELIMITER ;
+--call the cursor
+CALL DisplayEmployeeData(); 
